@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Facturación</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #34495e;
+            color: #2c3e50;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color:grey;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .company-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e8eef3;
+        }
+
+      
+        .main-menu {
+            background: #2c3e50;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100vh;
+            padding: 20px 0;
+            transition: all 0.3s ease;
+        }
+
+        .main-menu .logo {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 0 20px;
+        }
+
+        .main-menu .logo img {
+            width: 120px;
+            height: auto;
+        }
+
+        .main-menu .logo h2 {
+            color: white;
+            font-size: 20px;
+            margin: 10px 0;
+        }
+
+        .menu-items {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+
+        .menu-items li {
+            padding: 8px 20px;
+            position: relative;
+        }
+
+        .menu-items li a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            padding: 12px 15px;
+            border-radius: 8px;
+        }
+
+        .menu-items li a i {
+            margin-right: 15px;
+            font-size: 20px;
+        }
+
+        .menu-items li a:hover {
+            background: #34495e;
+        }
+
+        .menu-items li a.active {
+            background: #3498db;
+        }
+
+        /* Contenido principal */
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        /* Botón para mostrar/ocultar menú en móviles */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 999;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+
+            .main-menu {
+                transform: translateX(-250px);
+            }
+
+            .main-menu.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        .logo-container img {
+            max-width: 180px;
+            height: auto;
+        }
+        .main-menu .logo img {
+    width: 80px; /* Ajusta el tamaño según necesites */
+    height: auto;
+    margin: 0 auto;
+    display: block;
+    margin-bottom: 10px;
+}
+
+
+        .company-info {
+            text-align: right;
+            color: #34495e;
+        }
+
+        .company-info h2 {
+            margin: 0;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .company-info p {
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+
+        .company-header {
+    position: relative;
+    padding: 20px;
+}
+
+.header-logo {
+    position: absolute;
+    top: 0;
+    right: 0;
+    max-width: 215px; /* Ajusta el tamaño según necesites */
+    height: auto;
+    border-radius: 10px;
+}
+
+.company-info {
+    padding-top: 60px; /* Ajusta según el tamaño de tu logo */
+}
+
+
+        .header {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+            padding: 25px;
+            background-color: #f8fafc;
+            border-radius: 12px;
+        }
+
+        .header-item {
+            margin-bottom: 15px;
+        }
+
+        .header-item label {
+            display: inline-block;
+            width: 120px;
+            font-weight: 500;
+            color: #34495e;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="tel"] {
+            padding: 10px;
+            width: 220px;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            font-size: 0.95em;
+            color: #2d3748;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="tel"]:focus {
+            outline: none;
+            border-color: #63b3ed;
+            box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.1);
+        }
+
+        
+
+        .form-group {
+            background-color: #f8fafc;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 0.95em;
+        }
+
+        button:hover {
+            background-color: #3182ce;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 25px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background-color: #edf2f7;
+            color: #2d3748;
+            font-weight: 500;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        tr:hover {
+            background-color: #edf2f7;
+        }
+
+        .total {
+            text-align: right;
+            padding: 20px;
+            background-color: #f8fafc;
+            border-radius: 12px;
+            font-size: 1.1em;
+            color: #2d3748;
+        }
+
+        .delete-btn {
+            background-color: #fc8181;
+        }
+
+        .delete-btn:hover {
+            background-color: #f56565;
+        }
+
+        /* Estilos para inputs readonly */
+        input[readonly] {
+            background-color: #f8fafc;
+            border-color: #e2e8f0;
+        }
+
+        h2 {
+            color: #2d3748;
+            font-weight: 500;
+            margin-bottom: 25px;
+        }
+
+        .download-section {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+        }
+
+        .download-btn {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .download-btn:hover {
+            background-color: #45a049;
+        }
+
+        #invoice-form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+}
+
+#invoice-form label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #2d3748;
+}
+
+#invoice-form input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+#invoice-form input:focus {
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+}
+
+#invoice-form button[type="submit"] {
+    grid-column: 1 / -1;
+    background-color: #48bb78;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#invoice-form button[type="submit"]:hover {
+    background-color: #38a169;
+}
+
+/* Estilos para la tabla de productos */
+#invoice-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#invoice-table th {
+    background-color: #4a5568;
+    color: white;
+    padding: 12px;
+    text-align: left;
+    font-weight: 500;
+}
+
+#invoice-table td {
+    padding: 12px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+#invoice-table tr:last-child td {
+    border-bottom: none;
+}
+
+#invoice-table tr:hover {
+    background-color: #f7fafc;
+}
+
+/* Estilos para el total */
+h3 {
+    text-align: right;
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f7fafc;
+    border-radius: 6px;
+    font-size: 1.2em;
+    color: #2d3748;
+}
+
+#total-amount {
+    font-weight: bold;
+    color: #48bb78;
+    margin-left: 10px;
+}
+
+/* Estilos para el encabezado de la factura */
+.company-header {
+    background-color: #f8fafc;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    border: 1px solid #e2e8f0;
+}
+
+.company-info h2 {
+    color: #2d3748;
+    margin-bottom: 10px;
+    font-size: 1.5em;
+}
+
+.company-info p {
+    color: #4a5568;
+    margin: 5px 0;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    #invoice-form {
+        grid-template-columns: 1fr;
+    }
+
+    #invoice-table {
+        display: block;
+        overflow-x: auto;
+    }
+}
+
+/* Estilos para mensajes de error o éxito */
+.alert {
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.alert-error {
+    background-color: #fed7d7;
+    color: #c53030;
+    border: 1px solid #fc8181;
+}
+
+.alert-success {
+    background-color: #c6f6d5;
+    color: #2f855a;
+    border: 1px solid #68d391;
+}
+
+/* Estilos para los botones de acción */
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.action-button {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.primary-button {
+    background-color: #4299e1;
+    color: white;
+    border: none;
+}
+
+.primary-button:hover {
+    background-color: #3182ce;
+}
+
+.secondary-button {
+    background-color: #cbd5e0;
+    color: #2d3748;
+    border: none;
+}
+
+.secondary-button:hover {
+    background-color: #a0aec0;
+}
+
+
+#fechaCotizacion {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #2d3748;
+    width: 200px;
+}
+
+#numCotizacion {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #2d3748;
+    width: 120px;
+    text-align: center;
+    font-weight: 500;
+}
+
+
+
+        @media print {
+    .download-section,
+    .menu-toggle,
+    .main-menu {
+        display: none !important;
+    }
+
+    .container {
+        margin: 0;
+        padding: 15px;
+        box-shadow: none;
+    }
+
+    body {
+        background: white;
+    }
+}
+    </style>
+</head>
+<body>
+
+    <button class="menu-toggle" onclick="toggleMenu()">
+        ☰
+    </button>
+    <nav class="main-menu">
+        <div class="logo">
+            <img src="ima/LiLy-Plafon_logo.png" alt="Logo Instalaciones Radhames">
+            <h2>Instalaciones Radhames</h2>
+        </div>
+  
+        <ul class="menu-items">
+            <li>
+                <a href="#" class="active" onclick="cambiarSeccion('factura')">
+                    <i>📄</i> Sistema de Facturación
+                </a>
+            </li>
+            <li>
+                <a href="#" onclick="cambiarSeccion('cotizacion')">
+                    <i>💰</i> Sistema de Cotización
+                </a>
+            </li>
+            <li>
+                <a href="#" onclick="cambiarSeccion('clientes')">
+                    <i>👥</i> Clientes
+                </a>
+            </li>
+            <li>
+                <a href="#" onclick="cambiarSeccion('reportes')">
+                    <i>📊</i> Reportes
+                </a>
+            </li>
+            <li>
+                <a href="#" onclick="cambiarSeccion('configuracion')">
+                    <i>⚙️</i> Configuración
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+
+                 <div class="main-content">
+    <!-- Sección de Facturación -->
+    <div id="seccionFactura" class="section" style="display: block">
+  
+        <div class="container">
+            <!-- Contenido actual de facturación -->
+            <div class="company-header">
+                <div class="company-info">
+                    <div class="header-top">
+                        <img src="ima/LiLy-Plafon_logo.png" alt="Logo Instalaciones Radhames" class="header-logo">
+                    </div>
+                    <h2>Instalaciones Radhames</h2>
+                    <p>Direccion: San luis_Moca</p>
+                    <p>Tel: (829) 841-0683</p>
+                    <p>Instagram: radhames_santana_</p>
+                </div>
+            </div>
+
+            <h1>Factura</h1>
+            <form id="invoice-form">
+                <label for="invoice-number">Número de Factura:</label>
+                <input type="text" id="invoice-number" required>
+    
+                <label for="client-name">Nombre del Cliente:</label>
+                <input type="text" id="client-name" required>
+    
+                <label for="client-address">Dirección del Cliente:</label>
+                <input type="text" id="client-address" required>
+    
+                <label for="client-phone">Teléfono del Cliente:</label>
+                <input type="text" id="client-phone" required>
+    
+                <label for="date">Fecha:</label>
+                <input type="date" id="date" required>
+    
+                <label for="item">Descripción del Producto:</label>
+                <input type="text" id="item" required>
+    
+                <label for="price">Precio:</label>
+                <input type="number" id="price" required>
+    
+                <label for="quantity">Cantidad:</label>
+                <input type="number" id="quantity" required>
+    
+                <button type="submit">Agregar Producto</button>
+            </form>
+    
+            <h2>Productos Agregados</h2>
+            <table id="invoice-table">
+                <thead>
+                    <tr>
+                        <th>Descripción</th>
+                        <th>Precio</th>
+                        <th>Cantidad</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Los productos se agregarán aquí -->
+                </tbody>
+            </table>
+    
+            <h3>Total a Pagar: <span id="total-amount">0</span></h3>
+        </div>
+        <div class="download-section">
+            <button onclick="generarPDF()" class="download-btn">Generar PDF</button>
+        </div>
+        </div>
+    </div>
+
+    <!-- Sección de Cotización -->
+    <div id="seccionCotizacion" class="section" style="display: none">
+        <div class="container">
+            <div class="company-header">
+                <div class="company-info">
+                    <div class="header-top">
+                        <img src="ima/LiLy-Plafon_logo.png" alt="Logo Instalaciones Radhames" class="header-logo">
+                    </div>
+                    <h2>Instalaciones Radhames</h2>
+                    <p>Direccion: San luis_Moca</p>
+                    <p>Tel: (829) 841-0683</p>
+                    <p>Instagram: radhames_santana_</p>
+                </div>
+            </div>
+            <h1>Cotización</h1>
+            <div class="header">
+                <div class="header-left">
+                    <div class="header-item">
+                        <label>Fecha:</label>
+                        <input type="text" id="fechaCotizacion" readonly>
+                    </div>
+                    <div class="header-item">
+                        <label>Cliente:</label>
+                        <input type="text" id="clienteCotizacion" placeholder="Nombre del cliente">
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="header-item">
+                        <label>N° Cotización:</label>
+                        <input type="text" id="numCotizacion" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="number" id="cantidadCotizacion" placeholder="Cantidad" min="1">
+                <input type="text" id="descripcionCotizacion" placeholder="Descripción">
+                <input type="number" id="precioCotizacion" placeholder="Precio" step="0.01">
+                <button onclick="agregarItemCotizacion()">Agregar Item</button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cantidad</th>
+                        <th>Descripción</th>
+                        <th>Precio</th>
+                        <th>Subtotal</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="itemsCotizacion"></tbody>
+            </table>
+            <div class="total">
+                Total: $<span id="totalCotizacion">0.00</span>
+            </div>
+            <div class="download-section">
+                <button onclick="generarPDFCotizacion()">Generar Cotización PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Clientes -->
+    <div id="seccionClientes" class="section" style="display: none">
+        <div class="container">
+            <h1>Gestión de Clientes</h1>
+            <div class="form-group">
+                <input type="text" id="nombreCliente" placeholder="Nombre">
+                <input type="text" id="direccionCliente" placeholder="Dirección">
+                <input type="tel" id="telefonoCliente" placeholder="Teléfono">
+                <input type="email" id="emailCliente" placeholder="Email">
+                <button onclick="agregarCliente()">Agregar Cliente</button>
+            </div>
+            <table id="tablaClientes">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Dirección</th>
+                        <th>Teléfono</th>
+                        <th>Email</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="listaClientes"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Sección de Reportes -->
+    <div id="seccionReportes" class="section" style="display: none">
+        <div class="container">
+            <h1>Reportes</h1>
+            <div class="form-group">
+                <select id="tipoReporte">
+                    <option value="ventas">Reporte de Ventas</option>
+                    <option value="clientes">Reporte de Clientes</option>
+                    <option value="productos">Reporte de Productos</option>
+                </select>
+                <input type="date" id="fechaInicio">
+                <input type="date" id="fechaFin">
+                <button onclick="generarReporte()">Generar Reporte</button>
+            </div>
+            <div id="resultadoReporte"></div>
+        </div>
+    </div>
+
+    <!-- Sección de Configuración -->
+    <div id="seccionConfiguracion" class="section" style="display: none">
+        <div class="container">
+            <h1>Configuración</h1>
+            <div class="form-group">
+                <h3>Información de la Empresa</h3>
+                <input type="text" id="nombreEmpresa" placeholder="Nombre de la Empresa">
+                <input type="text" id="direccionEmpresa" placeholder="Dirección">
+                <input type="tel" id="telefonoEmpresa" placeholder="Teléfono">
+                <input type="text" id="rncEmpresa" placeholder="RNC">
+                <button onclick="guardarConfiguracion()">Guardar Cambios</button>
+            </div>
+            <div class="form-group">
+                <h3>Configuración de Facturación</h3>
+                <label>
+                    <input type="checkbox" id="incluirImpuestos">
+                    Incluir Impuestos
+                </label>
+                <input type="number" id="porcentajeImpuestos" placeholder="% Impuestos">
+            </div>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+    
+        <!-- Sección de Cotización -->
+        <div id="seccionCotizacion" class="section" style="display: none">
+            <div class="container">
+                <div class="company-header">
+                    <div class="company-info">
+                        <h2>Instalaciones Radhames</h2>
+                        <p>Direccion: San luis_Moca</p>
+                        <p>Tel: (829) 841-0683</p>
+                        <p>Instagram: radhames_santana_</p>
+                    </div>
+                </div>
+                <h1>Cotización</h1>
+                <div class="header">
+                    <div class="header-left">
+                        <div class="header-item">
+                            <label>Fecha y Hora:</label>
+                            <input type="text" id="fechaCotizacion" readonly>
+                        </div>
+                        <div class="header-item">
+                            <label>Cliente:</label>
+                            <input type="text" id="clienteCotizacion" placeholder="Nombre del cliente">
+                        </div>
+                    </div>
+                    <div class="header-right">
+                        <div class="header-item">
+                            <label>N° Cotización:</label>
+                            <input type="text" id="numCotizacion" readonly>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <input type="number" id="cantidadCotizacion" placeholder="Cantidad" min="1">
+                    <input type="text" id="descripcionCotizacion" placeholder="Descripción">
+                    <input type="number" id="precioCotizacion" placeholder="Precio" step="0.01">
+                    <button onclick="agregarItemCotizacion()">Agregar Item</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cantidad</th>
+                            <th>Descripción</th>
+                            <th>Precio</th>
+                            <th>Subtotal</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="itemsCotizacion"></tbody>
+                </table>
+                <div class="total">
+                    Total: $<span id="totalCotizacion">0.00</span>
+                </div>
+                <div class="download-section">
+                    <button onclick="generarPDFCotizacion()">Generar Cotización PDF</button>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Sección de Clientes -->
+        <div id="seccionClientes" class="section" style="display: none">
+            <div class="container">
+                <h1>Gestión de Clientes</h1>
+                <div class="form-group">
+                    <input type="text" id="nombreCliente" placeholder="Nombre">
+                    <input type="text" id="direccionCliente" placeholder="Dirección">
+                    <input type="tel" id="telefonoCliente" placeholder="Teléfono">
+                    <input type="email" id="emailCliente" placeholder="Email">
+                    <button onclick="agregarCliente()">Agregar Cliente</button>
+                </div>
+                <table id="tablaClientes">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Dirección</th>
+                            <th>Teléfono</th>
+                            <th>Email</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaClientes"></tbody>
+                </table>
+            </div>
+        </div>
+    
+        <!-- Sección de Reportes -->
+        <div id="seccionReportes" class="section" style="display: none">
+            <div class="container">
+                <h1>Reportes</h1>
+                <div class="form-group">
+                    <select id="tipoReporte">
+                        <option value="ventas">Reporte de Ventas</option>
+                        <option value="clientes">Reporte de Clientes</option>
+                        <option value="productos">Reporte de Productos</option>
+                    </select>
+                    <input type="date" id="fechaInicio">
+                    <input type="date" id="fechaFin">
+                    <button onclick="generarReporte()">Generar Reporte</button>
+                </div>
+                <div id="resultadoReporte"></div>
+            </div>
+        </div>
+    
+        <!-- Sección de Configuración -->
+        <div id="seccionConfiguracion" class="section" style="display: none">
+            <div class="container">
+                <h1>Configuración</h1>
+                <div class="form-group">
+                    <h3>Información de la Empresa</h3>
+                    <input type="text" id="nombreEmpresa" placeholder="Nombre de la Empresa">
+                    <input type="text" id="direccionEmpresa" placeholder="Dirección">
+                    <input type="tel" id="telefonoEmpresa" placeholder="Teléfono">
+                    <input type="text" id="rncEmpresa" placeholder="RNC">
+                    <button onclick="guardarConfiguracion()">Guardar Cambios</button>
+                </div>
+                <div class="form-group">
+                    <h3>Configuración de Facturación</h3>
+                    <label>
+                        <input type="checkbox" id="incluirImpuestos">
+                        Incluir Impuestos
+                    </label>
+                    <input type="number" id="porcentajeImpuestos" placeholder="% Impuestos">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+ 
+// Variables globales
+let items = [];
+let cotizaciones = [];
+let clientes = [];
+let numeroFactura = 1;
+let numeroCotizacion = 1;
+
+function inicializar() {
+    actualizarFechaHora();
+    // Actualizar cada segundo
+    setInterval(actualizarFechaHora, 1000);
+    
+    // Inicializar número de cotización
+    numeroCotizacion = parseInt(localStorage.getItem('numeroCotizacion')) || 1;
+    document.getElementById('numCotizacion').value = `C-${String(numeroCotizacion).padStart(6, '0')}`;
+}
+
+
+document.getElementById('invoice-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const item = document.getElementById('item').value;
+    const price = parseFloat(document.getElementById('price').value);
+    const quantity = parseInt(document.getElementById('quantity').value);
+    const total = price * quantity;
+
+    const tableBody = document.getElementById('invoice-table').getElementsByTagName('tbody')[0];
+    const newRow = tableBody.insertRow();
+
+    newRow.innerHTML = `
+        <td>${item}</td>
+        <td>${price.toFixed(2)}</td>
+        <td>${quantity}</td>
+        <td>${total.toFixed(2)}</td>
+    `;
+
+    updateTotal(total);
+    
+    // Limpiar el formulario
+    document.getElementById('invoice-form').reset();
+});
+
+let totalAmount = 0;
+
+function updateTotal(amount) {
+    totalAmount += amount;
+    document.getElementById('total-amount').innerText = totalAmount.toFixed(2);
+}
+
+// Función para cambiar entre secciones
+function cambiarSeccion(seccion) {
+    // Ocultar todas las secciones
+    document.querySelectorAll('.section').forEach(section => {
+        section.style.display = 'none';
+    });
+
+    // Mostrar la sección seleccionada
+    document.getElementById('seccion' + seccion.charAt(0).toUpperCase() + seccion.slice(1)).style.display = 'block';
+
+    // Actualizar clase active en el menú
+    document.querySelectorAll('.menu-items a').forEach(link => {
+        link.classList.remove('active');
+    });
+    event.currentTarget.classList.add('active');
+}
+
+function actualizarFechaHora() {
+    const ahora = new Date();
+    
+    // Formato de fecha: DD/MM/YYYY
+    const fecha = ahora.toLocaleDateString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+    
+    // Formato de hora: HH:MM:SS
+    const hora = ahora.toLocaleTimeString('es-ES', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+    });
+
+    // Actualizar fecha y hora en la cotización
+    const fechaCompleta = `${fecha} ${hora}`;
+    document.getElementById('fechaCotizacion').value = fechaCompleta;
+    
+    // Actualizar número de cotización
+    document.getElementById('numCotizacion').value = `C-${String(numeroCotizacion).padStart(6, '0')}`;
+}
+
+
+function agregarItem() {
+    const cantidad = document.getElementById('cantidad').value;
+    const unidad = document.getElementById('unidad').value;
+    const descripcion = document.getElementById('descripcion').value;
+    const precio = document.getElementById('precio').value;
+
+    if (!cantidad || !descripcion || !precio) {
+        alert('Por favor complete todos los campos requeridos');
+        return;
+    }
+
+    const item = {
+        cantidad: parseFloat(cantidad),
+        unidad: unidad,
+        descripcion: descripcion,
+        precio: parseFloat(precio),
+        subtotal: parseFloat(cantidad) * parseFloat(precio)
+    };
+
+    items.push(item);
+    actualizarTablaFactura();
+    limpiarCamposFactura();
+}
+
+function actualizarTablaFactura() {
+    const tbody = document.getElementById('itemsFactura');
+    tbody.innerHTML = '';
+    let total = 0;
+
+    items.forEach((item, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${item.cantidad}</td>
+            <td>${item.unidad}</td>
+            <td>${item.descripcion}</td>
+            <td>$${item.precio.toFixed(2)}</td>
+            <td>$${item.subtotal.toFixed(2)}</td>
+            <td><button class="delete-btn" onclick="eliminarItem(${index})">Eliminar</button></td>
+        `;
+        tbody.appendChild(tr);
+        total += item.subtotal;
+    });
+
+    document.getElementById('total').textContent = total.toFixed(2);
+}
+
+// Funciones para Cotización
+function agregarItemCotizacion() {
+    const cantidad = document.getElementById('cantidadCotizacion').value;
+    const descripcion = document.getElementById('descripcionCotizacion').value;
+    const precio = document.getElementById('precioCotizacion').value;
+
+    if (!cantidad || !descripcion || !precio) {
+        alert('Por favor complete todos los campos');
+        return;
+    }
+
+    const item = {
+        cantidad: parseFloat(cantidad),
+        descripcion: descripcion,
+        precio: parseFloat(precio),
+        subtotal: parseFloat(cantidad) * parseFloat(precio)
+    };
+
+    cotizaciones.push(item);
+    actualizarTablaCotizacion();
+    limpiarCamposCotizacion();
+}
+
+function actualizarTablaCotizacion() {
+    const tbody = document.getElementById('itemsCotizacion');
+    tbody.innerHTML = '';
+    let total = 0;
+
+    cotizaciones.forEach((item, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${item.cantidad}</td>
+            <td>${item.descripcion}</td>
+            <td>$${item.precio.toFixed(2)}</td>
+            <td>$${item.subtotal.toFixed(2)}</td>
+            <td><button class="delete-btn" onclick="eliminarItemCotizacion(${index})">Eliminar</button></td>
+        `;
+        tbody.appendChild(tr);
+        total += item.subtotal;
+    });
+
+    document.getElementById('totalCotizacion').textContent = total.toFixed(2);
+}
+
+// Funciones para Clientes
+function agregarCliente() {
+    const nombre = document.getElementById('nombreCliente').value;
+    const direccion = document.getElementById('direccionCliente').value;
+    const telefono = document.getElementById('telefonoCliente').value;
+    const email = document.getElementById('emailCliente').value;
+
+    if (!nombre || !direccion || !telefono) {
+        alert('Por favor complete los campos obligatorios');
+        return;
+    }
+
+    const cliente = {
+        id: Date.now(),
+        nombre,
+        direccion,
+        telefono,
+        email
+    };
+
+    clientes.push(cliente);
+    guardarClientes();
+    actualizarTablaClientes();
+    limpiarFormularioCliente();
+}
+
+function actualizarTablaClientes() {
+    const tbody = document.getElementById('listaClientes');
+    tbody.innerHTML = '';
+
+    clientes.forEach(cliente => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${cliente.nombre}</td>
+            <td>${cliente.direccion}</td>
+            <td>${cliente.telefono}</td>
+            <td>${cliente.email}</td>
+            <td>
+                <button onclick="editarCliente(${cliente.id})">Editar</button>
+                <button class="delete-btn" onclick="eliminarCliente(${cliente.id})">Eliminar</button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// Funciones de utilidad
+function toggleMenu() {
+    document.querySelector('.main-menu').classList.toggle('active');
+}
+
+function limpiarCamposFactura() {
+    document.getElementById('cantidad').value = '';
+    document.getElementById('unidad').value = '';
+    document.getElementById('descripcion').value = '';
+    document.getElementById('precio').value = '';
+}
+
+function limpiarCamposCotizacion() {
+    document.getElementById('cantidadCotizacion').value = '';
+    document.getElementById('descripcionCotizacion').value = '';
+    document.getElementById('precioCotizacion').value = '';
+}
+
+function limpiarFormularioCliente() {
+    document.getElementById('nombreCliente').value = '';
+    document.getElementById('direccionCliente').value = '';
+    document.getElementById('telefonoCliente').value = '';
+    document.getElementById('emailCliente').value = '';
+}
+
+// Inicializar al cargar la página
+window.onload = inicializar;
+
+function generarPDF() {
+    // Configuración del PDF
+    const opt = {
+        margin: 1,
+        filename: 'factura.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+
+    // Obtener el elemento que contiene la factura
+    const element = document.querySelector('.container');
+
+    // Crear una copia del elemento para modificarlo antes de generar el PDF
+    const elementToConvert = element.cloneNode(true);
+
+    // Generar el PDF
+    html2pdf().set(opt).from(elementToConvert).save().then(function() {
+        console.log('PDF generado exitosamente');
+    }).catch(function(error) {
+        console.error('Error al generar el PDF:', error);
+    });
+}
+
+// También puedes agregar una función similar para la cotización
+function generarPDFCotizacion() {
+    const opt = {
+        margin: 1,
+        filename: 'cotizacion.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+
+    const element = document.querySelector('#seccionCotizacion .container');
+    const elementToConvert = element.cloneNode(true);
+
+    html2pdf().set(opt).from(elementToConvert).save().then(function() {
+        console.log('PDF de cotización generado exitosamente');
+    }).catch(function(error) {
+        console.error('Error al generar el PDF:', error);
+    });
+}
+
+</script>
+
+</html>
+</body>
